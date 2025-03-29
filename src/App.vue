@@ -51,10 +51,6 @@ function copyPasswordAndOut() {
 
 onMounted(() => {
   utools.onPluginEnter((action) => {
-    const darkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    darkMediaQuery.addEventListener('change', (e) => {
-      toggleDark(e.matches)
-    })
     enterAction.value = action
     localOptions.value = getOptionsValue()
     if (action.code === 'copy') {

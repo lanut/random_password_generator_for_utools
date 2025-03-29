@@ -19,10 +19,10 @@ function getExcludeChars(options: GenerateRandomStringOptions) {
     if (includeChars) characters += includeChars;
 
     if (excludeChars) {
-        // noinspection TypeScriptUnresolvedReference
-        excludeChars += ' '
         characters = characters.split('').filter(char => !excludeChars.includes(char)).join('');
     }
+    // 删去空格或者其他特殊不可见字符
+    characters = characters.replace(/\s/g, '');
 
     // 删去characters中的重复字符
     characters = Array.from(new Set(characters)).join('');
@@ -31,7 +31,8 @@ function getExcludeChars(options: GenerateRandomStringOptions) {
 
 function generateRandomString(options: GenerateRandomStringOptions): string {
     let characters = getExcludeChars(options);
-
+    
+    // 生成随机字符串
     let result = '';
     for (let i = 0; i < options.length; i++) {
         result += characters.charAt(Math.floor(Math.random() * characters.length));
