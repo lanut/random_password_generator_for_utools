@@ -1,0 +1,25 @@
+{
+  "$schema": "../node_modules/utools-api-types/resource/utools.schema.json",
+  "main": "index.html",
+  "logo": "logo.png",
+  "development": {
+    "main": "http://localhost:5173"
+  },
+  "features": [
+    {
+      "code": "main",
+      "explain": "生成随机密码，打开窗口详细设定",
+      "cmds": [
+        "随机密码详细设置"
+      ]
+    },
+    {
+      "code": "copy",
+      "explain": "使用上一次的配置生成随机密码，并自动复制到剪贴板",
+      "mainHide": true,
+        "cmds": [
+            "随机密码直接复制"
+        ]
+    }
+  ]
+}

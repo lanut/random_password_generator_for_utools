@@ -1,0 +1,18 @@
+﻿{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2016",
+    "sourceMap": true,
+    "types": [
+      "utools-api-types"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/**/*.vue",
+    "src/**/*.js",
+    "src/**/*.ts"
+  ]
+}
