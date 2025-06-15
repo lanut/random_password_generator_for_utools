@@ -1,21 +1,27 @@
 <script lang="ts" setup>
-import {onMounted, Ref, ref} from 'vue';
+import {onMounted, Ref, ref, toRaw} from 'vue';
 import {getOptionsValue, resetOptions, saveOptions} from "./js/storage";
 import {defaultOptions, generatePassword, GenerateRandomStringOptions, getExcludeChars} from "./js/generatefun";
-import {Delete, DocumentCopy} from "@element-plus/icons-vue";
-
+import {Delete, DocumentCopy, QuestionFilled} from "@element-plus/icons-vue";
+import {ElMessage} from "element-plus";
+import {generatePasswordSuggestions, Suggestion} from "./js/Suggestion";
 
 
 const enterAction = ref({})
 const localOptions: Ref<GenerateRandomStringOptions> = ref(defaultOptions())
-const passwords = ref()
-const count = ref(1)
+const passwords: Ref<string[]> = ref()
+const count: Ref<number> = ref(1)
+const suggestions: Ref<Suggestion[]> = ref([])
 
 
 // 生成密码
 function genPassword(count: number = 1) {
+  suggestions.value = []
   passwords.value = generatePassword(localOptions.value, count)
-  saveOptions(localOptions.value)
+  if (count === 1) {
+    suggestions.value = generatePasswordSuggestions(passwords.value[0])
+  }
+  saveOptions(toRaw(localOptions.value))
 }
 
 
@@ -28,6 +34,7 @@ function resetOptionsCommand() {
 // 复制单条密码
 function copyPassword(password: string) {
   utools.copyText(password)
+  ElMessage.success("密码已复制到剪贴板")
 }
 
 // 复制并隐藏密码
@@ -97,7 +104,16 @@ onMounted(() => {
         </el-col>
         <el-col :span="10">
           <el-space :size="20">
-            <el-text>密码个数</el-text>
+            <el-text>
+              密码个数
+              <el-tooltip
+                  content="密码个数并不会保存到设置中，重启插件后会恢复为1个"
+                  placement="top">
+                <el-icon>
+                  <QuestionFilled/>
+                </el-icon>
+              </el-tooltip>
+            </el-text>
             <el-input-number v-model="count"
                              :min="1" :max="20"
                              style="width: 100px;"/>
@@ -149,17 +165,50 @@ onMounted(() => {
             </el-button>
           </el-space>
         </div>
+        <div v-if="passwords.length === 1">
+          <div v-for="suggestion in suggestions" class="suggestions">
+            <el-button plain style="width: 519px;justify-content: normal" :type="suggestion.seriousness">
+              <div class="suggestContent">
+                <el-text tag="b">{{ suggestion.title }}</el-text>
+                <br/>
+                <br/>
+                <el-text>{{ suggestion.content }}</el-text>
+              </div>
+            </el-button>
+          </div>
+        </div>
       </el-card>
     </div>
   </div>
 
 </template>
 
-<style scoped>
+<style lang="less" scoped>
 .password-generator {
   max-width: 600px;
   margin: auto;
   padding: 20px;
 }
+
+.suggestions {
+  margin-bottom: 5px;
+  height: auto;
+
+  :deep(.el-button) {
+    width: 519px;
+    height: auto;
+    justify-content: normal;
+    text-align: left;
+  }
+
+  .suggestContent {
+    display: inline-block;
+    //align-items: center;
+    justify-content: normal;
+    gap: 8px;
+    width: 500px
+  }
+}
+
 
 </style>

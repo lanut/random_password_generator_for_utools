@@ -1,32 +1,24 @@
 ﻿import {defaultOptions, GenerateRandomStringOptions} from "./generatefun";
 
-interface DbOptions extends DbDoc {
-    options: GenerateRandomStringOptions
-}
-
-
 /**
  * 获取配置项
  * @param key
  */
 function getOptionsValue(key: string = "default"): GenerateRandomStringOptions {
-    let localStore: DbOptions = utools.db.get(key);
-    if (!localStore) {
-        localStore = {
-            _id: key,
-            options: defaultOptions()
-        }
-        utools.db.put(localStore)
+    let localOptions: GenerateRandomStringOptions = utools.dbStorage.getItem(key);
+    if (!localOptions) {
+        localOptions = defaultOptions();
+        saveOptions(localOptions, key);
     }
     debugger
-    return localStore.options;
+    return localOptions;
 }
 
 /**
  * 恢复初始化设置
  */
 function resetOptions(): GenerateRandomStringOptions {
-    utools.db.remove("default");
+    utools.dbStorage.removeItem("default");
     return getOptionsValue();
 }
 
@@ -36,20 +28,7 @@ function resetOptions(): GenerateRandomStringOptions {
  * @param key
  */
 function saveOptions(options: GenerateRandomStringOptions, key: string = "default") {
-    const {hasUpperCase, hasLowerCase, hasNumbers, includeChars, excludeChars, length} = options;
-    let localStore: DbOptions = {
-        _id: key,
-        options: {
-            hasUpperCase: hasUpperCase,
-            hasLowerCase: hasLowerCase,
-            hasNumbers: hasNumbers,
-            includeChars: includeChars,
-            excludeChars: excludeChars,
-            length: length
-        }
-    }
-    utools.db.remove(key);
-    utools.db.put(localStore);
+    utools.dbStorage.setItem(key, options)
 }
 
 export {getOptionsValue, resetOptions, saveOptions};
