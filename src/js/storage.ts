@@ -5,6 +5,10 @@ interface DbOptions extends DbDoc {
 }
 
 
+/**
+ * 获取配置项
+ * @param key
+ */
 function getOptionsValue(key: string = "default"): GenerateRandomStringOptions {
     let localStore: DbOptions = utools.db.get(key);
     if (!localStore) {
@@ -18,13 +22,19 @@ function getOptionsValue(key: string = "default"): GenerateRandomStringOptions {
     return localStore.options;
 }
 
-// 恢复初始化设置
+/**
+ * 恢复初始化设置
+ */
 function resetOptions(): GenerateRandomStringOptions {
     utools.db.remove("default");
     return getOptionsValue();
 }
 
-// 保存设置
+/**
+ * 保存设置
+ * @param options
+ * @param key
+ */
 function saveOptions(options: GenerateRandomStringOptions, key: string = "default") {
     const {hasUpperCase, hasLowerCase, hasNumbers, includeChars, excludeChars, length} = options;
     let localStore: DbOptions = {
